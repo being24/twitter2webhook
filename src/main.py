@@ -47,7 +47,6 @@ if __name__ == "__main__":
     result_dict = {k: result_dict[k] for k in list(result_dict)[:index]}
 
     for id, val in reversed(result_dict.items()):
-        print(val)
         hook.set_parameter(username=val['name'], avatar_url=val['avator_url'])
         url = gen_tweet_url(val['screen_name'], id)
         hook.send_webhook(f"{url}\ntweeted at {val['created_at']}")
