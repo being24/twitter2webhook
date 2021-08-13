@@ -3,6 +3,7 @@
 
 import json
 import pathlib
+from datetime import datetime
 
 from utils.twitter import TwitterUtils
 from utils.webhook import Webhook
@@ -49,7 +50,10 @@ if __name__ == "__main__":
     for id, val in reversed(result_dict.items()):
         hook.set_parameter(username=val['name'], avatar_url=val['avator_url'])
         url = gen_tweet_url(val['screen_name'], id)
-        hook.send_webhook(f"{url}\ntweeted at {val['created_at']}")
+        created_at = datetime.strptime(
+            val['created_at'], '%a %b %d %H:%M:%S %z %Y')
+        created_at_stamp = f'<t:{int(created_at.timestamp())}:f>'
+        hook.send_webhook(f"{url}\ntweeted at {created_at_stamp}")
         last_id = id
 
     setting_dict['last_id'] = last_id
