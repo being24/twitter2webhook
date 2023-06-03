@@ -6,7 +6,7 @@ from zoneinfo import ZoneInfo
 
 try:
     from zoneinfo import ZoneInfo
-except ImportError:
+except ModuleNotFoundError:
     from backports import zoneinfo as ZoneInfo
 
 import tweepy
