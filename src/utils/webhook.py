@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 import logging
 import os
 import pathlib
@@ -10,14 +7,14 @@ import requests
 from dotenv import load_dotenv
 
 
-class Webhook():
+class Webhook:
     """
     Webhookを扱うclass
     """
 
     def __init__(self) -> None:
         root_path = pathlib.Path(__file__).parents[2]
-        dotenv_path = root_path / '.env'
+        dotenv_path = root_path / ".env"
 
         if not dotenv_path.is_file():
             print(dotenv_path)
@@ -25,26 +22,21 @@ class Webhook():
 
         load_dotenv(dotenv_path)
 
-        WEBHOOK_URL = os.getenv('WEBHOOK_URL')
+        WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 
-        KEY = (WEBHOOK_URL)
+        if WEBHOOK_URL is None:
+            raise ValueError("WEBHOOK_URL is None")
 
-        if any(i is None for i in KEY):
-            raise ValueError(KEY)
-
-        self.USERNAME = 'default'
-        self.AVATOR_URL = 'https://raw.githubusercontent.com/being24/twitter2webhook/master/data/SCPJP.png'
+        self.USERNAME = "default"
+        self.AVATAR_URL = "https://raw.githubusercontent.com/being24/twitter2webhook/master/data/SCPJP.png"
         self.WEBHOOK_URL = WEBHOOK_URL
 
     def set_parameter(self, username, avatar_url):
         self.USERNAME = username
-        self.AVATOR_URL = avatar_url
+        self.AVATAR_URL = avatar_url
 
     def gen_webhook_msg(self, content):
-        msg = {
-            "username": self.USERNAME,
-            "avatar_url": self.AVATOR_URL,
-            "content": content}
+        msg = {"username": self.USERNAME, "avatar_url": self.AVATAR_URL, "content": content}
         return msg
 
     def send_webhook(self, msg):
@@ -55,7 +47,7 @@ class Webhook():
             return -1
 
         if len(msg) >= 2000:
-            logging.error('msg too long!')
+            logging.error("msg too long!")
             logging.error(msg)
             return -1
 
@@ -74,6 +66,10 @@ class Webhook():
 
         time.sleep(0.5)
 
+    def send_webhook_with_embed(self, embed):
+
+        pass
+
 
 if __name__ == "__main__":
-    Webhook().send_webhook('test')
+    Webhook().send_webhook("test")
