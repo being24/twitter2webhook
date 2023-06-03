@@ -38,8 +38,6 @@ if __name__ == "__main__":
             setting_dict = json.load(f)
         last_id = setting_dict["last_id"]
 
-    last_id = 00000000000
-
     timeline = tw.get_timeline()
 
     id_list = [i.id for i in timeline]
