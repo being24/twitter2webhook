@@ -74,13 +74,12 @@ if __name__ == "__main__":
             timestamp=tweet.created_at.timestamp()
         )  # TODO: discord-webhookが1.1.0よりバージョンが上がったらdatetimeを渡せるようになるはずなのでそのときはdatetimeを渡すようにする
         webhook.add_embed(embed)
-
-        try:
-            response = webhook.execute()
-        except Exception as e:
-            print(e)
-
         last_id = tweet.id
+
+    try:
+        response = webhook.execute()
+    except Exception as e:
+        print(e)
 
     setting_dict["last_id"] = last_id
     dump_json(json_path, setting_dict)
