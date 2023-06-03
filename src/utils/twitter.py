@@ -44,6 +44,7 @@ class TweetData:
     text: str
     profile_image_url: str
     user_name: str
+    image_urls: Optional[List[str]] = None
     created_at: Optional[datetime] = None
 
     def __post_init__(self):
@@ -70,7 +71,11 @@ class TwitterUtils:
         self.client = tweepy.Client(Bearer_Token)
 
     def get_timeline(self) -> List[TweetData]:
-        tweets = self.client.get_users_tweets(id=self.scp_jp_announce_id)
+        tweets = self.client.get_users_tweets(
+            id=self.scp_jp_announce_id,
+            expansions=["attachments.media_keys"],
+            media_fields=["url"],
+        )
         user = self.client.get_user(id=self.scp_jp_announce_id, user_fields=["profile_image_url"])
 
         if not isinstance(tweets, tweepy.Response):
@@ -79,7 +84,14 @@ class TwitterUtils:
         if not isinstance(user, tweepy.Response):
             raise FailedToGetResponse
 
-        # tweetsをTweetDataのリストにリスト内包表記で変換
+        for tweet in tweets.data:
+            if "attachments" in tweet:
+                if "media_keys" in tweet["attachments"]:
+                    media_keys = tweet["attachments"]["media_keys"]
+                    tweet["attachments"]["media_keys"] = [
+                        media["url"] for media in tweets.includes["media"] if media["media_key"] in media_keys
+                    ]
+
         return [
             TweetData(
                 name=user.data.name,
@@ -87,6 +99,7 @@ class TwitterUtils:
                 text=tweet.text,
                 profile_image_url=user.data.profile_image_url,
                 user_name=user.data.username,
+                image_urls=tweet["attachments"]["media_keys"] if "attachments" in tweet else None,
             )
             for tweet in tweets.data
         ]

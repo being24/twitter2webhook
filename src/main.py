@@ -38,6 +38,8 @@ if __name__ == "__main__":
             setting_dict = json.load(f)
         last_id = setting_dict["last_id"]
 
+    # last_id = 00000000000
+
     timeline = tw.get_timeline()
 
     id_list = [i.id for i in timeline]
@@ -68,6 +70,9 @@ if __name__ == "__main__":
         )
 
         embed.set_author(name=f"{tweet.name}@({tweet.user_name})", url=url, icon_url=tweet.profile_image_url)
+        if tweet.image_urls is not None:
+            for image_url in tweet.image_urls:
+                embed.set_image(url=image_url)
         embed.set_timestamp(
             timestamp=tweet.created_at.timestamp()
         )  # TODO: discord-webhookが1.1.0よりバージョンが上がったらdatetimeを渡せるようになるはずなのでそのときはdatetimeを渡すようにする
