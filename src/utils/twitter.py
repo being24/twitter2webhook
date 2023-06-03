@@ -2,12 +2,13 @@ import os
 import pathlib
 from dataclasses import dataclass
 from datetime import datetime
-from zoneinfo import ZoneInfo
 
 try:
     from zoneinfo import ZoneInfo
 except ModuleNotFoundError:
-    from backports import zoneinfo as ZoneInfo
+    from backports.zoneinfo import ZoneInfo
+
+from typing import Optional, List
 
 import tweepy
 from dotenv import load_dotenv
@@ -43,7 +44,7 @@ class TweetData:
     text: str
     profile_image_url: str
     user_name: str
-    created_at: datetime | None = None
+    created_at: Optional[datetime] = None
 
     def __post_init__(self):
         self.created_at = Snowflake().convert(self.id)
@@ -68,7 +69,7 @@ class TwitterUtils:
 
         self.client = tweepy.Client(Bearer_Token)
 
-    def get_timeline(self) -> list[TweetData]:
+    def get_timeline(self) -> List[TweetData]:
         tweets = self.client.get_users_tweets(id=self.scp_jp_announce_id)
         user = self.client.get_user(id=self.scp_jp_announce_id, user_fields=["profile_image_url"])
 
