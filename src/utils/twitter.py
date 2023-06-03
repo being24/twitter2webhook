@@ -4,6 +4,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports import zoneinfo as ZoneInfo
+
 import tweepy
 from dotenv import load_dotenv
 
@@ -75,7 +80,13 @@ class TwitterUtils:
 
         # tweetsをTweetDataのリストにリスト内包表記で変換
         return [
-            TweetData(name=user.data.name, id=tweet.id, text=tweet.text, profile_image_url=user.data.profile_image_url, user_name=user.data.username)
+            TweetData(
+                name=user.data.name,
+                id=tweet.id,
+                text=tweet.text,
+                profile_image_url=user.data.profile_image_url,
+                user_name=user.data.username,
+            )
             for tweet in tweets.data
         ]
 
